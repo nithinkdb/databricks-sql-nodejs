@@ -10,8 +10,6 @@ import Int64 = require('node-int64');
 
 
 declare enum TProtocolVersion {
-  __HIVE_JDBC_WORKAROUND = -7,
-  __TEST_PROTOCOL_VERSION = 65281,
   HIVE_CLI_SERVICE_PROTOCOL_V1 = 0,
   HIVE_CLI_SERVICE_PROTOCOL_V2 = 1,
   HIVE_CLI_SERVICE_PROTOCOL_V3 = 2,
@@ -22,12 +20,7 @@ declare enum TProtocolVersion {
   HIVE_CLI_SERVICE_PROTOCOL_V8 = 7,
   HIVE_CLI_SERVICE_PROTOCOL_V9 = 8,
   HIVE_CLI_SERVICE_PROTOCOL_V10 = 9,
-  SPARK_CLI_SERVICE_PROTOCOL_V1 = 42241,
-  SPARK_CLI_SERVICE_PROTOCOL_V2 = 42242,
-  SPARK_CLI_SERVICE_PROTOCOL_V3 = 42243,
-  SPARK_CLI_SERVICE_PROTOCOL_V4 = 42244,
-  SPARK_CLI_SERVICE_PROTOCOL_V5 = 42245,
-  SPARK_CLI_SERVICE_PROTOCOL_V6 = 42246,
+  HIVE_CLI_SERVICE_PROTOCOL_V11 = 10,
 }
 
 declare enum TTypeId {
@@ -53,19 +46,7 @@ declare enum TTypeId {
   CHAR_TYPE = 19,
   INTERVAL_YEAR_MONTH_TYPE = 20,
   INTERVAL_DAY_TIME_TYPE = 21,
-}
-
-declare enum TSparkRowSetType {
-  ARROW_BASED_SET = 0,
-  COLUMN_BASED_SET = 1,
-  ROW_BASED_SET = 2,
-  URL_BASED_SET = 3,
-}
-
-declare enum TOperationIdempotencyType {
-  UNKNOWN = 0,
-  NON_IDEMPOTENT = 1,
-  IDEMPOTENT = 2,
+  TIMESTAMPLOCALTZ_TYPE = 22,
 }
 
 declare enum TStatusCode {
@@ -148,13 +129,7 @@ declare enum TGetInfoType {
   CLI_CATALOG_NAME = 10003,
   CLI_COLLATION_SEQ = 10004,
   CLI_MAX_IDENTIFIER_LEN = 10005,
-}
-
-declare enum TCacheLookupResult {
-  CACHE_INELIGIBLE = 0,
-  LOCAL_CACHE_HIT = 1,
-  REMOTE_CACHE_HIT = 2,
-  CACHE_MISS = 3,
+  CLI_ODBC_KEYWORDS = 10006,
 }
 
 declare enum TFetchOrientation {
@@ -173,775 +148,634 @@ declare enum TJobExecutionStatus {
 }
 
 declare class TTypeQualifierValue {
-  public i32Value?: number;
-  public stringValue?: string;
+    public i32Value?: number;
+    public stringValue?: string;
 
-    constructor(args?: { i32Value?: number; stringValue?: string; });
-}
+      constructor(args?: { i32Value?: number; stringValue?: string; });
+  }
 
 declare class TTypeQualifiers {
-  public qualifiers: { [k: string]: TTypeQualifierValue; };
+    public qualifiers: { [k: string]: TTypeQualifierValue; };
 
-    constructor(args?: { qualifiers: { [k: string]: TTypeQualifierValue; }; });
-}
+      constructor(args?: { qualifiers: { [k: string]: TTypeQualifierValue; }; });
+  }
 
 declare class TPrimitiveTypeEntry {
-  public type: TTypeId;
-  public typeQualifiers?: TTypeQualifiers;
+    public type: TTypeId;
+    public typeQualifiers?: TTypeQualifiers;
 
-    constructor(args?: { type: TTypeId; typeQualifiers?: TTypeQualifiers; });
-}
+      constructor(args?: { type: TTypeId; typeQualifiers?: TTypeQualifiers; });
+  }
 
 declare class TArrayTypeEntry {
-  public objectTypePtr: number;
+    public objectTypePtr: number;
 
-    constructor(args?: { objectTypePtr: number; });
-}
+      constructor(args?: { objectTypePtr: number; });
+  }
 
 declare class TMapTypeEntry {
-  public keyTypePtr: number;
-  public valueTypePtr: number;
+    public keyTypePtr: number;
+    public valueTypePtr: number;
 
-    constructor(args?: { keyTypePtr: number; valueTypePtr: number; });
-}
+      constructor(args?: { keyTypePtr: number; valueTypePtr: number; });
+  }
 
 declare class TStructTypeEntry {
-  public nameToTypePtr: { [k: string]: number; };
+    public nameToTypePtr: { [k: string]: number; };
 
-    constructor(args?: { nameToTypePtr: { [k: string]: number; }; });
-}
+      constructor(args?: { nameToTypePtr: { [k: string]: number; }; });
+  }
 
 declare class TUnionTypeEntry {
-  public nameToTypePtr: { [k: string]: number; };
+    public nameToTypePtr: { [k: string]: number; };
 
-    constructor(args?: { nameToTypePtr: { [k: string]: number; }; });
-}
+      constructor(args?: { nameToTypePtr: { [k: string]: number; }; });
+  }
 
 declare class TUserDefinedTypeEntry {
-  public typeClassName: string;
+    public typeClassName: string;
 
-    constructor(args?: { typeClassName: string; });
-}
+      constructor(args?: { typeClassName: string; });
+  }
 
 declare class TTypeEntry {
-  public primitiveEntry?: TPrimitiveTypeEntry;
-  public arrayEntry?: TArrayTypeEntry;
-  public mapEntry?: TMapTypeEntry;
-  public structEntry?: TStructTypeEntry;
-  public unionEntry?: TUnionTypeEntry;
-  public userDefinedTypeEntry?: TUserDefinedTypeEntry;
+    public primitiveEntry?: TPrimitiveTypeEntry;
+    public arrayEntry?: TArrayTypeEntry;
+    public mapEntry?: TMapTypeEntry;
+    public structEntry?: TStructTypeEntry;
+    public unionEntry?: TUnionTypeEntry;
+    public userDefinedTypeEntry?: TUserDefinedTypeEntry;
 
-    constructor(args?: { primitiveEntry?: TPrimitiveTypeEntry; arrayEntry?: TArrayTypeEntry; mapEntry?: TMapTypeEntry; structEntry?: TStructTypeEntry; unionEntry?: TUnionTypeEntry; userDefinedTypeEntry?: TUserDefinedTypeEntry; });
-}
+      constructor(args?: { primitiveEntry?: TPrimitiveTypeEntry; arrayEntry?: TArrayTypeEntry; mapEntry?: TMapTypeEntry; structEntry?: TStructTypeEntry; unionEntry?: TUnionTypeEntry; userDefinedTypeEntry?: TUserDefinedTypeEntry; });
+  }
 
 declare class TTypeDesc {
-  public types: TTypeEntry[];
+    public types: TTypeEntry[];
 
-    constructor(args?: { types: TTypeEntry[]; });
-}
+      constructor(args?: { types: TTypeEntry[]; });
+  }
 
 declare class TColumnDesc {
-  public columnName: string;
-  public typeDesc: TTypeDesc;
-  public position: number;
-  public comment?: string;
+    public columnName: string;
+    public typeDesc: TTypeDesc;
+    public position: number;
+    public comment?: string;
 
-    constructor(args?: { columnName: string; typeDesc: TTypeDesc; position: number; comment?: string; });
-}
+      constructor(args?: { columnName: string; typeDesc: TTypeDesc; position: number; comment?: string; });
+  }
 
 declare class TTableSchema {
-  public columns: TColumnDesc[];
+    public columns: TColumnDesc[];
 
-    constructor(args?: { columns: TColumnDesc[]; });
-}
+      constructor(args?: { columns: TColumnDesc[]; });
+  }
 
 declare class TBoolValue {
-  public value?: boolean;
+    public value?: boolean;
 
-    constructor(args?: { value?: boolean; });
-}
+      constructor(args?: { value?: boolean; });
+  }
 
 declare class TByteValue {
-  public value?: any;
+    public value?: any;
 
-    constructor(args?: { value?: any; });
-}
+      constructor(args?: { value?: any; });
+  }
 
 declare class TI16Value {
-  public value?: number;
+    public value?: number;
 
-    constructor(args?: { value?: number; });
-}
+      constructor(args?: { value?: number; });
+  }
 
 declare class TI32Value {
-  public value?: number;
+    public value?: number;
 
-    constructor(args?: { value?: number; });
-}
+      constructor(args?: { value?: number; });
+  }
 
 declare class TI64Value {
-  public value?: Int64;
+    public value?: Int64;
 
-    constructor(args?: { value?: Int64; });
-}
+      constructor(args?: { value?: Int64; });
+  }
 
 declare class TDoubleValue {
-  public value?: number;
+    public value?: number;
 
-    constructor(args?: { value?: number; });
-}
+      constructor(args?: { value?: number; });
+  }
 
 declare class TStringValue {
-  public value?: string;
+    public value?: string;
 
-    constructor(args?: { value?: string; });
-}
+      constructor(args?: { value?: string; });
+  }
 
 declare class TColumnValue {
-  public boolVal?: TBoolValue;
-  public byteVal?: TByteValue;
-  public i16Val?: TI16Value;
-  public i32Val?: TI32Value;
-  public i64Val?: TI64Value;
-  public doubleVal?: TDoubleValue;
-  public stringVal?: TStringValue;
+    public boolVal?: TBoolValue;
+    public byteVal?: TByteValue;
+    public i16Val?: TI16Value;
+    public i32Val?: TI32Value;
+    public i64Val?: TI64Value;
+    public doubleVal?: TDoubleValue;
+    public stringVal?: TStringValue;
 
-    constructor(args?: { boolVal?: TBoolValue; byteVal?: TByteValue; i16Val?: TI16Value; i32Val?: TI32Value; i64Val?: TI64Value; doubleVal?: TDoubleValue; stringVal?: TStringValue; });
-}
+      constructor(args?: { boolVal?: TBoolValue; byteVal?: TByteValue; i16Val?: TI16Value; i32Val?: TI32Value; i64Val?: TI64Value; doubleVal?: TDoubleValue; stringVal?: TStringValue; });
+  }
 
 declare class TRow {
-  public colVals: TColumnValue[];
+    public colVals: TColumnValue[];
 
-    constructor(args?: { colVals: TColumnValue[]; });
-}
+      constructor(args?: { colVals: TColumnValue[]; });
+  }
 
 declare class TBoolColumn {
-  public values: boolean[];
-  public nulls: Buffer;
+    public values: boolean[];
+    public nulls: Buffer;
 
-    constructor(args?: { values: boolean[]; nulls: Buffer; });
-}
+      constructor(args?: { values: boolean[]; nulls: Buffer; });
+  }
 
 declare class TByteColumn {
-  public values: any[];
-  public nulls: Buffer;
+    public values: any[];
+    public nulls: Buffer;
 
-    constructor(args?: { values: any[]; nulls: Buffer; });
-}
+      constructor(args?: { values: any[]; nulls: Buffer; });
+  }
 
 declare class TI16Column {
-  public values: number[];
-  public nulls: Buffer;
+    public values: number[];
+    public nulls: Buffer;
 
-    constructor(args?: { values: number[]; nulls: Buffer; });
-}
+      constructor(args?: { values: number[]; nulls: Buffer; });
+  }
 
 declare class TI32Column {
-  public values: number[];
-  public nulls: Buffer;
+    public values: number[];
+    public nulls: Buffer;
 
-    constructor(args?: { values: number[]; nulls: Buffer; });
-}
+      constructor(args?: { values: number[]; nulls: Buffer; });
+  }
 
 declare class TI64Column {
-  public values: Int64[];
-  public nulls: Buffer;
+    public values: Int64[];
+    public nulls: Buffer;
 
-    constructor(args?: { values: Int64[]; nulls: Buffer; });
-}
+      constructor(args?: { values: Int64[]; nulls: Buffer; });
+  }
 
 declare class TDoubleColumn {
-  public values: number[];
-  public nulls: Buffer;
+    public values: number[];
+    public nulls: Buffer;
 
-    constructor(args?: { values: number[]; nulls: Buffer; });
-}
+      constructor(args?: { values: number[]; nulls: Buffer; });
+  }
 
 declare class TStringColumn {
-  public values: string[];
-  public nulls: Buffer;
+    public values: string[];
+    public nulls: Buffer;
 
-    constructor(args?: { values: string[]; nulls: Buffer; });
-}
+      constructor(args?: { values: string[]; nulls: Buffer; });
+  }
 
 declare class TBinaryColumn {
-  public values: Buffer[];
-  public nulls: Buffer;
+    public values: Buffer[];
+    public nulls: Buffer;
 
-    constructor(args?: { values: Buffer[]; nulls: Buffer; });
-}
+      constructor(args?: { values: Buffer[]; nulls: Buffer; });
+  }
 
 declare class TColumn {
-  public boolVal?: TBoolColumn;
-  public byteVal?: TByteColumn;
-  public i16Val?: TI16Column;
-  public i32Val?: TI32Column;
-  public i64Val?: TI64Column;
-  public doubleVal?: TDoubleColumn;
-  public stringVal?: TStringColumn;
-  public binaryVal?: TBinaryColumn;
+    public boolVal?: TBoolColumn;
+    public byteVal?: TByteColumn;
+    public i16Val?: TI16Column;
+    public i32Val?: TI32Column;
+    public i64Val?: TI64Column;
+    public doubleVal?: TDoubleColumn;
+    public stringVal?: TStringColumn;
+    public binaryVal?: TBinaryColumn;
 
-    constructor(args?: { boolVal?: TBoolColumn; byteVal?: TByteColumn; i16Val?: TI16Column; i32Val?: TI32Column; i64Val?: TI64Column; doubleVal?: TDoubleColumn; stringVal?: TStringColumn; binaryVal?: TBinaryColumn; });
-}
-
-declare class TSparkArrowBatch {
-  public batch: Buffer;
-  public rowCount: Int64;
-
-    constructor(args?: { batch: Buffer; rowCount: Int64; });
-}
-
-declare class TSparkArrowResultLink {
-  public fileLink: string;
-  public expiryTime: Int64;
-  public startRowOffset: Int64;
-  public rowCount: Int64;
-  public bytesNum: Int64;
-
-    constructor(args?: { fileLink: string; expiryTime: Int64; startRowOffset: Int64; rowCount: Int64; bytesNum: Int64; });
-}
+      constructor(args?: { boolVal?: TBoolColumn; byteVal?: TByteColumn; i16Val?: TI16Column; i32Val?: TI32Column; i64Val?: TI64Column; doubleVal?: TDoubleColumn; stringVal?: TStringColumn; binaryVal?: TBinaryColumn; });
+  }
 
 declare class TRowSet {
-  public startRowOffset: Int64;
-  public rows: TRow[];
-  public columns?: TColumn[];
-  public binaryColumns?: Buffer;
-  public columnCount?: number;
-  public arrowBatches?: TSparkArrowBatch[];
-  public resultLinks?: TSparkArrowResultLink[];
+    public startRowOffset: Int64;
+    public rows: TRow[];
+    public columns?: TColumn[];
+    public binaryColumns?: Buffer;
+    public columnCount?: number;
 
-    constructor(args?: { startRowOffset: Int64; rows: TRow[]; columns?: TColumn[]; binaryColumns?: Buffer; columnCount?: number; arrowBatches?: TSparkArrowBatch[]; resultLinks?: TSparkArrowResultLink[]; });
-}
-
-declare class TDBSqlTempView {
-  public name?: string;
-  public sqlStatement?: string;
-  public properties?: { [k: string]: string; };
-  public viewSchema?: string;
-
-    constructor(args?: { name?: string; sqlStatement?: string; properties?: { [k: string]: string; }; viewSchema?: string; });
-}
-
-declare class TDBSqlSessionCapabilities {
-  public supportsMultipleCatalogs?: boolean;
-
-    constructor(args?: { supportsMultipleCatalogs?: boolean; });
-}
-
-declare class TDBSqlSessionConf {
-  public confs?: { [k: string]: string; };
-  public tempViews?: TDBSqlTempView[];
-  public currentDatabase?: string;
-  public currentCatalog?: string;
-  public sessionCapabilities?: TDBSqlSessionCapabilities;
-
-    constructor(args?: { confs?: { [k: string]: string; }; tempViews?: TDBSqlTempView[]; currentDatabase?: string; currentCatalog?: string; sessionCapabilities?: TDBSqlSessionCapabilities; });
-}
+      constructor(args?: { startRowOffset: Int64; rows: TRow[]; columns?: TColumn[]; binaryColumns?: Buffer; columnCount?: number; });
+  }
 
 declare class TStatus {
-  public statusCode: TStatusCode;
-  public infoMessages?: string[];
-  public sqlState?: string;
-  public errorCode?: number;
-  public errorMessage?: string;
+    public statusCode: TStatusCode;
+    public infoMessages?: string[];
+    public sqlState?: string;
+    public errorCode?: number;
+    public errorMessage?: string;
 
-    constructor(args?: { statusCode: TStatusCode; infoMessages?: string[]; sqlState?: string; errorCode?: number; errorMessage?: string; });
-}
-
-declare class TNamespace {
-  public catalogName?: string;
-  public schemaName?: string;
-
-    constructor(args?: { catalogName?: string; schemaName?: string; });
-}
+      constructor(args?: { statusCode: TStatusCode; infoMessages?: string[]; sqlState?: string; errorCode?: number; errorMessage?: string; });
+  }
 
 declare class THandleIdentifier {
-  public guid: Buffer;
-  public secret: Buffer;
+    public guid: Buffer;
+    public secret: Buffer;
 
-    constructor(args?: { guid: Buffer; secret: Buffer; });
-}
+      constructor(args?: { guid: Buffer; secret: Buffer; });
+  }
 
 declare class TSessionHandle {
-  public sessionId: THandleIdentifier;
-  public serverProtocolVersion?: TProtocolVersion;
+    public sessionId: THandleIdentifier;
 
-    constructor(args?: { sessionId: THandleIdentifier; serverProtocolVersion?: TProtocolVersion; });
-}
+      constructor(args?: { sessionId: THandleIdentifier; });
+  }
 
 declare class TOperationHandle {
-  public operationId: THandleIdentifier;
-  public operationType: TOperationType;
-  public hasResultSet: boolean;
-  public modifiedRowCount?: number;
+    public operationId: THandleIdentifier;
+    public operationType: TOperationType;
+    public hasResultSet: boolean;
+    public modifiedRowCount?: number;
 
-    constructor(args?: { operationId: THandleIdentifier; operationType: TOperationType; hasResultSet: boolean; modifiedRowCount?: number; });
-}
+      constructor(args?: { operationId: THandleIdentifier; operationType: TOperationType; hasResultSet: boolean; modifiedRowCount?: number; });
+  }
 
 declare class TOpenSessionReq {
-  public client_protocol?: TProtocolVersion;
-  public username?: string;
-  public password?: string;
-  public configuration?: { [k: string]: string; };
-  public getInfos?: TGetInfoType[];
-  public client_protocol_i64?: Int64;
-  public connectionProperties?: { [k: string]: string; };
-  public initialNamespace?: TNamespace;
-  public canUseMultipleCatalogs?: boolean;
-  public sessionId?: THandleIdentifier;
+    public client_protocol?: TProtocolVersion;
+    public username?: string;
+    public password?: string;
+    public configuration?: { [k: string]: string; };
 
-    constructor(args?: { client_protocol?: TProtocolVersion; username?: string; password?: string; configuration?: { [k: string]: string; }; getInfos?: TGetInfoType[]; client_protocol_i64?: Int64; connectionProperties?: { [k: string]: string; }; initialNamespace?: TNamespace; canUseMultipleCatalogs?: boolean; sessionId?: THandleIdentifier; });
-}
+      constructor(args?: { client_protocol?: TProtocolVersion; username?: string; password?: string; configuration?: { [k: string]: string; }; });
+  }
 
 declare class TOpenSessionResp {
-  public status: TStatus;
-  public serverProtocolVersion: TProtocolVersion;
-  public sessionHandle?: TSessionHandle;
-  public configuration?: { [k: string]: string; };
-  public initialNamespace?: TNamespace;
-  public canUseMultipleCatalogs?: boolean;
-  public getInfos?: TGetInfoValue[];
+    public status: TStatus;
+    public serverProtocolVersion?: TProtocolVersion;
+    public sessionHandle?: TSessionHandle;
+    public configuration?: { [k: string]: string; };
 
-    constructor(args?: { status: TStatus; serverProtocolVersion: TProtocolVersion; sessionHandle?: TSessionHandle; configuration?: { [k: string]: string; }; initialNamespace?: TNamespace; canUseMultipleCatalogs?: boolean; getInfos?: TGetInfoValue[]; });
-}
+      constructor(args?: { status: TStatus; serverProtocolVersion?: TProtocolVersion; sessionHandle?: TSessionHandle; configuration?: { [k: string]: string; }; });
+  }
+
+declare class TSetClientInfoReq {
+    public sessionHandle: TSessionHandle;
+    public configuration?: { [k: string]: string; };
+
+      constructor(args?: { sessionHandle: TSessionHandle; configuration?: { [k: string]: string; }; });
+  }
+
+declare class TSetClientInfoResp {
+    public status: TStatus;
+
+      constructor(args?: { status: TStatus; });
+  }
 
 declare class TCloseSessionReq {
-  public sessionHandle: TSessionHandle;
+    public sessionHandle: TSessionHandle;
 
-    constructor(args?: { sessionHandle: TSessionHandle; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; });
+  }
 
 declare class TCloseSessionResp {
-  public status: TStatus;
+    public status: TStatus;
 
-    constructor(args?: { status: TStatus; });
-}
+      constructor(args?: { status: TStatus; });
+  }
 
 declare class TGetInfoValue {
-  public stringValue?: string;
-  public smallIntValue?: number;
-  public integerBitmask?: number;
-  public integerFlag?: number;
-  public binaryValue?: number;
-  public lenValue?: Int64;
+    public stringValue?: string;
+    public smallIntValue?: number;
+    public integerBitmask?: number;
+    public integerFlag?: number;
+    public binaryValue?: number;
+    public lenValue?: Int64;
 
-    constructor(args?: { stringValue?: string; smallIntValue?: number; integerBitmask?: number; integerFlag?: number; binaryValue?: number; lenValue?: Int64; });
-}
+      constructor(args?: { stringValue?: string; smallIntValue?: number; integerBitmask?: number; integerFlag?: number; binaryValue?: number; lenValue?: Int64; });
+  }
 
 declare class TGetInfoReq {
-  public sessionHandle: TSessionHandle;
-  public infoType: TGetInfoType;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
+    public infoType: TGetInfoType;
 
-    constructor(args?: { sessionHandle: TSessionHandle; infoType: TGetInfoType; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; infoType: TGetInfoType; });
+  }
 
 declare class TGetInfoResp {
-  public status: TStatus;
-  public infoValue: TGetInfoValue;
+    public status: TStatus;
+    public infoValue: TGetInfoValue;
 
-    constructor(args?: { status: TStatus; infoValue: TGetInfoValue; });
-}
-
-declare class TSparkGetDirectResults {
-  public maxRows: Int64;
-  public maxBytes?: Int64;
-
-    constructor(args?: { maxRows: Int64; maxBytes?: Int64; });
-}
-
-declare class TSparkDirectResults {
-  public operationStatus?: TGetOperationStatusResp;
-  public resultSetMetadata?: TGetResultSetMetadataResp;
-  public resultSet?: TFetchResultsResp;
-  public closeOperation?: TCloseOperationResp;
-
-    constructor(args?: { operationStatus?: TGetOperationStatusResp; resultSetMetadata?: TGetResultSetMetadataResp; resultSet?: TFetchResultsResp; closeOperation?: TCloseOperationResp; });
-}
-
-declare class TSparkArrowTypes {
-  public timestampAsArrow?: boolean;
-  public decimalAsArrow?: boolean;
-  public complexTypesAsArrow?: boolean;
-  public intervalTypesAsArrow?: boolean;
-
-    constructor(args?: { timestampAsArrow?: boolean; decimalAsArrow?: boolean; complexTypesAsArrow?: boolean; intervalTypesAsArrow?: boolean; });
-}
+      constructor(args?: { status: TStatus; infoValue: TGetInfoValue; });
+  }
 
 declare class TExecuteStatementReq {
-  public sessionHandle: TSessionHandle;
-  public statement: string;
-  public confOverlay?: { [k: string]: string; };
-  public runAsync?: boolean;
-  public getDirectResults?: TSparkGetDirectResults;
-  public queryTimeout?: Int64;
-  public canReadArrowResult?: boolean;
-  public canDownloadResult?: boolean;
-  public canDecompressLZ4Result?: boolean;
-  public maxBytesPerFile?: Int64;
-  public useArrowNativeTypes?: TSparkArrowTypes;
-  public operationId?: THandleIdentifier;
-  public sessionConf?: TDBSqlSessionConf;
-  public rejectHighCostQueries?: boolean;
-  public estimatedCost?: number;
-  public executionVersion?: number;
+    public sessionHandle: TSessionHandle;
+    public statement: string;
+    public confOverlay?: { [k: string]: string; };
+    public runAsync?: boolean;
+    public queryTimeout?: Int64;
 
-    constructor(args?: { sessionHandle: TSessionHandle; statement: string; confOverlay?: { [k: string]: string; }; runAsync?: boolean; getDirectResults?: TSparkGetDirectResults; queryTimeout?: Int64; canReadArrowResult?: boolean; canDownloadResult?: boolean; canDecompressLZ4Result?: boolean; maxBytesPerFile?: Int64; useArrowNativeTypes?: TSparkArrowTypes; operationId?: THandleIdentifier; sessionConf?: TDBSqlSessionConf; rejectHighCostQueries?: boolean; estimatedCost?: number; executionVersion?: number; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; statement: string; confOverlay?: { [k: string]: string; }; runAsync?: boolean; queryTimeout?: Int64; });
+  }
 
 declare class TExecuteStatementResp {
-  public status: TStatus;
-  public operationHandle?: TOperationHandle;
-  public directResults?: TSparkDirectResults;
-  public executionRejected?: boolean;
-  public maxClusterCapacity?: number;
-  public queryCost?: number;
-  public sessionConf?: TDBSqlSessionConf;
-  public currentClusterLoad?: number;
-  public idempotencyType?: TOperationIdempotencyType;
+    public status: TStatus;
+    public operationHandle?: TOperationHandle;
 
-    constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; directResults?: TSparkDirectResults; executionRejected?: boolean; maxClusterCapacity?: number; queryCost?: number; sessionConf?: TDBSqlSessionConf; currentClusterLoad?: number; idempotencyType?: TOperationIdempotencyType; });
-}
+      constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; });
+  }
 
 declare class TGetTypeInfoReq {
-  public sessionHandle: TSessionHandle;
-  public getDirectResults?: TSparkGetDirectResults;
-  public runAsync?: boolean;
-  public operationId?: THandleIdentifier;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
 
-    constructor(args?: { sessionHandle: TSessionHandle; getDirectResults?: TSparkGetDirectResults; runAsync?: boolean; operationId?: THandleIdentifier; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; });
+  }
 
 declare class TGetTypeInfoResp {
-  public status: TStatus;
-  public operationHandle?: TOperationHandle;
-  public directResults?: TSparkDirectResults;
+    public status: TStatus;
+    public operationHandle?: TOperationHandle;
 
-    constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; directResults?: TSparkDirectResults; });
-}
+      constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; });
+  }
 
 declare class TGetCatalogsReq {
-  public sessionHandle: TSessionHandle;
-  public getDirectResults?: TSparkGetDirectResults;
-  public runAsync?: boolean;
-  public operationId?: THandleIdentifier;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
 
-    constructor(args?: { sessionHandle: TSessionHandle; getDirectResults?: TSparkGetDirectResults; runAsync?: boolean; operationId?: THandleIdentifier; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; });
+  }
 
 declare class TGetCatalogsResp {
-  public status: TStatus;
-  public operationHandle?: TOperationHandle;
-  public directResults?: TSparkDirectResults;
+    public status: TStatus;
+    public operationHandle?: TOperationHandle;
 
-    constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; directResults?: TSparkDirectResults; });
-}
+      constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; });
+  }
 
 declare class TGetSchemasReq {
-  public sessionHandle: TSessionHandle;
-  public catalogName?: string;
-  public schemaName?: string;
-  public getDirectResults?: TSparkGetDirectResults;
-  public runAsync?: boolean;
-  public operationId?: THandleIdentifier;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
+    public catalogName?: string;
+    public schemaName?: string;
 
-    constructor(args?: { sessionHandle: TSessionHandle; catalogName?: string; schemaName?: string; getDirectResults?: TSparkGetDirectResults; runAsync?: boolean; operationId?: THandleIdentifier; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; catalogName?: string; schemaName?: string; });
+  }
 
 declare class TGetSchemasResp {
-  public status: TStatus;
-  public operationHandle?: TOperationHandle;
-  public directResults?: TSparkDirectResults;
+    public status: TStatus;
+    public operationHandle?: TOperationHandle;
 
-    constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; directResults?: TSparkDirectResults; });
-}
+      constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; });
+  }
 
 declare class TGetTablesReq {
-  public sessionHandle: TSessionHandle;
-  public catalogName?: string;
-  public schemaName?: string;
-  public tableName?: string;
-  public tableTypes?: string[];
-  public getDirectResults?: TSparkGetDirectResults;
-  public runAsync?: boolean;
-  public operationId?: THandleIdentifier;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
+    public catalogName?: string;
+    public schemaName?: string;
+    public tableName?: string;
+    public tableTypes?: string[];
 
-    constructor(args?: { sessionHandle: TSessionHandle; catalogName?: string; schemaName?: string; tableName?: string; tableTypes?: string[]; getDirectResults?: TSparkGetDirectResults; runAsync?: boolean; operationId?: THandleIdentifier; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; catalogName?: string; schemaName?: string; tableName?: string; tableTypes?: string[]; });
+  }
 
 declare class TGetTablesResp {
-  public status: TStatus;
-  public operationHandle?: TOperationHandle;
-  public directResults?: TSparkDirectResults;
+    public status: TStatus;
+    public operationHandle?: TOperationHandle;
 
-    constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; directResults?: TSparkDirectResults; });
-}
+      constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; });
+  }
 
 declare class TGetTableTypesReq {
-  public sessionHandle: TSessionHandle;
-  public getDirectResults?: TSparkGetDirectResults;
-  public runAsync?: boolean;
-  public operationId?: THandleIdentifier;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
 
-    constructor(args?: { sessionHandle: TSessionHandle; getDirectResults?: TSparkGetDirectResults; runAsync?: boolean; operationId?: THandleIdentifier; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; });
+  }
 
 declare class TGetTableTypesResp {
-  public status: TStatus;
-  public operationHandle?: TOperationHandle;
-  public directResults?: TSparkDirectResults;
+    public status: TStatus;
+    public operationHandle?: TOperationHandle;
 
-    constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; directResults?: TSparkDirectResults; });
-}
+      constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; });
+  }
 
 declare class TGetColumnsReq {
-  public sessionHandle: TSessionHandle;
-  public catalogName?: string;
-  public schemaName?: string;
-  public tableName?: string;
-  public columnName?: string;
-  public getDirectResults?: TSparkGetDirectResults;
-  public runAsync?: boolean;
-  public operationId?: THandleIdentifier;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
+    public catalogName?: string;
+    public schemaName?: string;
+    public tableName?: string;
+    public columnName?: string;
 
-    constructor(args?: { sessionHandle: TSessionHandle; catalogName?: string; schemaName?: string; tableName?: string; columnName?: string; getDirectResults?: TSparkGetDirectResults; runAsync?: boolean; operationId?: THandleIdentifier; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; catalogName?: string; schemaName?: string; tableName?: string; columnName?: string; });
+  }
 
 declare class TGetColumnsResp {
-  public status: TStatus;
-  public operationHandle?: TOperationHandle;
-  public directResults?: TSparkDirectResults;
+    public status: TStatus;
+    public operationHandle?: TOperationHandle;
 
-    constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; directResults?: TSparkDirectResults; });
-}
+      constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; });
+  }
 
 declare class TGetFunctionsReq {
-  public sessionHandle: TSessionHandle;
-  public catalogName?: string;
-  public schemaName?: string;
-  public functionName: string;
-  public getDirectResults?: TSparkGetDirectResults;
-  public runAsync?: boolean;
-  public operationId?: THandleIdentifier;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
+    public catalogName?: string;
+    public schemaName?: string;
+    public functionName: string;
 
-    constructor(args?: { sessionHandle: TSessionHandle; catalogName?: string; schemaName?: string; functionName: string; getDirectResults?: TSparkGetDirectResults; runAsync?: boolean; operationId?: THandleIdentifier; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; catalogName?: string; schemaName?: string; functionName: string; });
+  }
 
 declare class TGetFunctionsResp {
-  public status: TStatus;
-  public operationHandle?: TOperationHandle;
-  public directResults?: TSparkDirectResults;
+    public status: TStatus;
+    public operationHandle?: TOperationHandle;
 
-    constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; directResults?: TSparkDirectResults; });
-}
+      constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; });
+  }
 
 declare class TGetPrimaryKeysReq {
-  public sessionHandle: TSessionHandle;
-  public catalogName?: string;
-  public schemaName?: string;
-  public tableName?: string;
-  public getDirectResults?: TSparkGetDirectResults;
-  public runAsync?: boolean;
-  public operationId?: THandleIdentifier;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
+    public catalogName?: string;
+    public schemaName?: string;
+    public tableName?: string;
 
-    constructor(args?: { sessionHandle: TSessionHandle; catalogName?: string; schemaName?: string; tableName?: string; getDirectResults?: TSparkGetDirectResults; runAsync?: boolean; operationId?: THandleIdentifier; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; catalogName?: string; schemaName?: string; tableName?: string; });
+  }
 
 declare class TGetPrimaryKeysResp {
-  public status: TStatus;
-  public operationHandle?: TOperationHandle;
-  public directResults?: TSparkDirectResults;
+    public status: TStatus;
+    public operationHandle?: TOperationHandle;
 
-    constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; directResults?: TSparkDirectResults; });
-}
+      constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; });
+  }
 
 declare class TGetCrossReferenceReq {
-  public sessionHandle: TSessionHandle;
-  public parentCatalogName?: string;
-  public parentSchemaName?: string;
-  public parentTableName?: string;
-  public foreignCatalogName?: string;
-  public foreignSchemaName?: string;
-  public foreignTableName?: string;
-  public getDirectResults?: TSparkGetDirectResults;
-  public runAsync?: boolean;
-  public operationId?: THandleIdentifier;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
+    public parentCatalogName?: string;
+    public parentSchemaName?: string;
+    public parentTableName?: string;
+    public foreignCatalogName?: string;
+    public foreignSchemaName?: string;
+    public foreignTableName?: string;
 
-    constructor(args?: { sessionHandle: TSessionHandle; parentCatalogName?: string; parentSchemaName?: string; parentTableName?: string; foreignCatalogName?: string; foreignSchemaName?: string; foreignTableName?: string; getDirectResults?: TSparkGetDirectResults; runAsync?: boolean; operationId?: THandleIdentifier; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; parentCatalogName?: string; parentSchemaName?: string; parentTableName?: string; foreignCatalogName?: string; foreignSchemaName?: string; foreignTableName?: string; });
+  }
 
 declare class TGetCrossReferenceResp {
-  public status: TStatus;
-  public operationHandle?: TOperationHandle;
-  public directResults?: TSparkDirectResults;
+    public status: TStatus;
+    public operationHandle?: TOperationHandle;
 
-    constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; directResults?: TSparkDirectResults; });
-}
+      constructor(args?: { status: TStatus; operationHandle?: TOperationHandle; });
+  }
 
 declare class TGetOperationStatusReq {
-  public operationHandle: TOperationHandle;
-  public getProgressUpdate?: boolean;
+    public operationHandle: TOperationHandle;
+    public getProgressUpdate?: boolean;
 
-    constructor(args?: { operationHandle: TOperationHandle; getProgressUpdate?: boolean; });
-}
+      constructor(args?: { operationHandle: TOperationHandle; getProgressUpdate?: boolean; });
+  }
 
 declare class TGetOperationStatusResp {
-  public status: TStatus;
-  public operationState?: TOperationState;
-  public sqlState?: string;
-  public errorCode?: number;
-  public errorMessage?: string;
-  public taskStatus?: string;
-  public operationStarted?: Int64;
-  public operationCompleted?: Int64;
-  public hasResultSet?: boolean;
-  public progressUpdateResponse?: TProgressUpdateResp;
-  public numModifiedRows?: Int64;
-  public displayMessage?: string;
-  public diagnosticInfo?: string;
+    public status: TStatus;
+    public operationState?: TOperationState;
+    public sqlState?: string;
+    public errorCode?: number;
+    public errorMessage?: string;
+    public taskStatus?: string;
+    public operationStarted?: Int64;
+    public operationCompleted?: Int64;
+    public hasResultSet?: boolean;
+    public progressUpdateResponse?: TProgressUpdateResp;
+    public numModifiedRows?: Int64;
 
-    constructor(args?: { status: TStatus; operationState?: TOperationState; sqlState?: string; errorCode?: number; errorMessage?: string; taskStatus?: string; operationStarted?: Int64; operationCompleted?: Int64; hasResultSet?: boolean; progressUpdateResponse?: TProgressUpdateResp; numModifiedRows?: Int64; displayMessage?: string; diagnosticInfo?: string; });
-}
+      constructor(args?: { status: TStatus; operationState?: TOperationState; sqlState?: string; errorCode?: number; errorMessage?: string; taskStatus?: string; operationStarted?: Int64; operationCompleted?: Int64; hasResultSet?: boolean; progressUpdateResponse?: TProgressUpdateResp; numModifiedRows?: Int64; });
+  }
 
 declare class TCancelOperationReq {
-  public operationHandle: TOperationHandle;
-  public executionVersion?: number;
+    public operationHandle: TOperationHandle;
 
-    constructor(args?: { operationHandle: TOperationHandle; executionVersion?: number; });
-}
+      constructor(args?: { operationHandle: TOperationHandle; });
+  }
 
 declare class TCancelOperationResp {
-  public status: TStatus;
+    public status: TStatus;
 
-    constructor(args?: { status: TStatus; });
-}
+      constructor(args?: { status: TStatus; });
+  }
 
 declare class TCloseOperationReq {
-  public operationHandle: TOperationHandle;
+    public operationHandle: TOperationHandle;
 
-    constructor(args?: { operationHandle: TOperationHandle; });
-}
+      constructor(args?: { operationHandle: TOperationHandle; });
+  }
 
 declare class TCloseOperationResp {
-  public status: TStatus;
+    public status: TStatus;
 
-    constructor(args?: { status: TStatus; });
-}
+      constructor(args?: { status: TStatus; });
+  }
 
 declare class TGetResultSetMetadataReq {
-  public operationHandle: TOperationHandle;
+    public operationHandle: TOperationHandle;
 
-    constructor(args?: { operationHandle: TOperationHandle; });
-}
+      constructor(args?: { operationHandle: TOperationHandle; });
+  }
 
 declare class TGetResultSetMetadataResp {
-  public status: TStatus;
-  public schema?: TTableSchema;
-  public resultFormat?: TSparkRowSetType;
-  public lz4Compressed?: boolean;
-  public arrowSchema?: Buffer;
-  public cacheLookupResult?: TCacheLookupResult;
-  public uncompressedBytes?: Int64;
-  public compressedBytes?: Int64;
+    public status: TStatus;
+    public schema?: TTableSchema;
 
-    constructor(args?: { status: TStatus; schema?: TTableSchema; resultFormat?: TSparkRowSetType; lz4Compressed?: boolean; arrowSchema?: Buffer; cacheLookupResult?: TCacheLookupResult; uncompressedBytes?: Int64; compressedBytes?: Int64; });
-}
+      constructor(args?: { status: TStatus; schema?: TTableSchema; });
+  }
 
 declare class TFetchResultsReq {
-  public operationHandle: TOperationHandle;
-  public orientation?: TFetchOrientation;
-  public maxRows: Int64;
-  public fetchType?: number;
-  public maxBytes?: Int64;
-  public startRowOffset?: Int64;
-  public includeResultSetMetadata?: boolean;
+    public operationHandle: TOperationHandle;
+    public orientation?: TFetchOrientation;
+    public maxRows: Int64;
+    public fetchType?: number;
 
-    constructor(args?: { operationHandle: TOperationHandle; orientation?: TFetchOrientation; maxRows: Int64; fetchType?: number; maxBytes?: Int64; startRowOffset?: Int64; includeResultSetMetadata?: boolean; });
-}
+      constructor(args?: { operationHandle: TOperationHandle; orientation?: TFetchOrientation; maxRows: Int64; fetchType?: number; });
+  }
 
 declare class TFetchResultsResp {
-  public status: TStatus;
-  public hasMoreRows?: boolean;
-  public results?: TRowSet;
-  public resultSetMetadata?: TGetResultSetMetadataResp;
+    public status: TStatus;
+    public hasMoreRows?: boolean;
+    public results?: TRowSet;
 
-    constructor(args?: { status: TStatus; hasMoreRows?: boolean; results?: TRowSet; resultSetMetadata?: TGetResultSetMetadataResp; });
-}
+      constructor(args?: { status: TStatus; hasMoreRows?: boolean; results?: TRowSet; });
+  }
 
 declare class TGetDelegationTokenReq {
-  public sessionHandle: TSessionHandle;
-  public owner: string;
-  public renewer: string;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
+    public owner: string;
+    public renewer: string;
 
-    constructor(args?: { sessionHandle: TSessionHandle; owner: string; renewer: string; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; owner: string; renewer: string; });
+  }
 
 declare class TGetDelegationTokenResp {
-  public status: TStatus;
-  public delegationToken?: string;
+    public status: TStatus;
+    public delegationToken?: string;
 
-    constructor(args?: { status: TStatus; delegationToken?: string; });
-}
+      constructor(args?: { status: TStatus; delegationToken?: string; });
+  }
 
 declare class TCancelDelegationTokenReq {
-  public sessionHandle: TSessionHandle;
-  public delegationToken: string;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
+    public delegationToken: string;
 
-    constructor(args?: { sessionHandle: TSessionHandle; delegationToken: string; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; delegationToken: string; });
+  }
 
 declare class TCancelDelegationTokenResp {
-  public status: TStatus;
+    public status: TStatus;
 
-    constructor(args?: { status: TStatus; });
-}
+      constructor(args?: { status: TStatus; });
+  }
 
 declare class TRenewDelegationTokenReq {
-  public sessionHandle: TSessionHandle;
-  public delegationToken: string;
-  public sessionConf?: TDBSqlSessionConf;
+    public sessionHandle: TSessionHandle;
+    public delegationToken: string;
 
-    constructor(args?: { sessionHandle: TSessionHandle; delegationToken: string; sessionConf?: TDBSqlSessionConf; });
-}
+      constructor(args?: { sessionHandle: TSessionHandle; delegationToken: string; });
+  }
 
 declare class TRenewDelegationTokenResp {
-  public status: TStatus;
+    public status: TStatus;
 
-    constructor(args?: { status: TStatus; });
-}
+      constructor(args?: { status: TStatus; });
+  }
 
 declare class TProgressUpdateResp {
-  public headerNames: string[];
-  public rows: string[][];
-  public progressedPercentage: number;
-  public status: TJobExecutionStatus;
-  public footerSummary: string;
-  public startTime: Int64;
+    public headerNames: string[];
+    public rows: string[][];
+    public progressedPercentage: number;
+    public status: TJobExecutionStatus;
+    public footerSummary: string;
+    public startTime: Int64;
 
-    constructor(args?: { headerNames: string[]; rows: string[][]; progressedPercentage: number; status: TJobExecutionStatus; footerSummary: string; startTime: Int64; });
-}
+      constructor(args?: { headerNames: string[]; rows: string[][]; progressedPercentage: number; status: TJobExecutionStatus; footerSummary: string; startTime: Int64; });
+  }
 
-declare var PRIMITIVE_TYPES: TTypeId[];
+declare class TGetQueryIdReq {
+    public operationHandle: TOperationHandle;
 
-declare var COMPLEX_TYPES: TTypeId[];
+      constructor(args?: { operationHandle: TOperationHandle; });
+  }
 
-declare var COLLECTION_TYPES: TTypeId[];
+declare class TGetQueryIdResp {
+    public queryId: string;
 
-declare var TYPE_NAMES: { [k: number /*TTypeId*/]: string; };
+      constructor(args?: { queryId: string; });
+  }
 
-declare var CHARACTER_MAXIMUM_LENGTH: string;
+declare const PRIMITIVE_TYPES: TTypeId[];
 
-declare var PRECISION: string;
+declare const COMPLEX_TYPES: TTypeId[];
 
-declare var SCALE: string;
+declare const COLLECTION_TYPES: TTypeId[];
+
+declare const TYPE_NAMES: { [k: number /*TTypeId*/]: string; };
+
+declare const CHARACTER_MAXIMUM_LENGTH: string;
+
+declare const PRECISION: string;
+
+declare const SCALE: string;

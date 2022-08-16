@@ -12,13 +12,10 @@ import Int64 = require('node-int64');
 import ttypes = require('./TCLIService_types');
 import TProtocolVersion = ttypes.TProtocolVersion
 import TTypeId = ttypes.TTypeId
-import TSparkRowSetType = ttypes.TSparkRowSetType
-import TOperationIdempotencyType = ttypes.TOperationIdempotencyType
 import TStatusCode = ttypes.TStatusCode
 import TOperationState = ttypes.TOperationState
 import TOperationType = ttypes.TOperationType
 import TGetInfoType = ttypes.TGetInfoType
-import TCacheLookupResult = ttypes.TCacheLookupResult
 import TFetchOrientation = ttypes.TFetchOrientation
 import TJobExecutionStatus = ttypes.TJobExecutionStatus
 import PRIMITIVE_TYPES = ttypes.PRIMITIVE_TYPES
@@ -58,27 +55,20 @@ import TDoubleColumn = ttypes.TDoubleColumn
 import TStringColumn = ttypes.TStringColumn
 import TBinaryColumn = ttypes.TBinaryColumn
 import TColumn = ttypes.TColumn
-import TSparkArrowBatch = ttypes.TSparkArrowBatch
-import TSparkArrowResultLink = ttypes.TSparkArrowResultLink
 import TRowSet = ttypes.TRowSet
-import TDBSqlTempView = ttypes.TDBSqlTempView
-import TDBSqlSessionCapabilities = ttypes.TDBSqlSessionCapabilities
-import TDBSqlSessionConf = ttypes.TDBSqlSessionConf
 import TStatus = ttypes.TStatus
-import TNamespace = ttypes.TNamespace
 import THandleIdentifier = ttypes.THandleIdentifier
 import TSessionHandle = ttypes.TSessionHandle
 import TOperationHandle = ttypes.TOperationHandle
 import TOpenSessionReq = ttypes.TOpenSessionReq
 import TOpenSessionResp = ttypes.TOpenSessionResp
+import TSetClientInfoReq = ttypes.TSetClientInfoReq
+import TSetClientInfoResp = ttypes.TSetClientInfoResp
 import TCloseSessionReq = ttypes.TCloseSessionReq
 import TCloseSessionResp = ttypes.TCloseSessionResp
 import TGetInfoValue = ttypes.TGetInfoValue
 import TGetInfoReq = ttypes.TGetInfoReq
 import TGetInfoResp = ttypes.TGetInfoResp
-import TSparkGetDirectResults = ttypes.TSparkGetDirectResults
-import TSparkDirectResults = ttypes.TSparkDirectResults
-import TSparkArrowTypes = ttypes.TSparkArrowTypes
 import TExecuteStatementReq = ttypes.TExecuteStatementReq
 import TExecuteStatementResp = ttypes.TExecuteStatementResp
 import TGetTypeInfoReq = ttypes.TGetTypeInfoReq
@@ -116,81 +106,135 @@ import TCancelDelegationTokenResp = ttypes.TCancelDelegationTokenResp
 import TRenewDelegationTokenReq = ttypes.TRenewDelegationTokenReq
 import TRenewDelegationTokenResp = ttypes.TRenewDelegationTokenResp
 import TProgressUpdateResp = ttypes.TProgressUpdateResp
+import TGetQueryIdReq = ttypes.TGetQueryIdReq
+import TGetQueryIdResp = ttypes.TGetQueryIdResp
 
 declare class Client {
-  private output: thrift.TTransport;
-  private pClass: thrift.TProtocol;
-  private _seqid: number;
+    private output: thrift.TTransport;
+    private pClass: thrift.TProtocol;
+    private _seqid: number;
 
-  constructor(output: thrift.TTransport, pClass: { new(trans: thrift.TTransport): thrift.TProtocol });
+    constructor(output: thrift.TTransport, pClass: { new(trans: thrift.TTransport): thrift.TProtocol });
 
-  OpenSession(req: TOpenSessionReq, callback?: (error: void, response: TOpenSessionResp)=>void): void;
+    OpenSession(req: TOpenSessionReq): Promise<TOpenSessionResp>;
 
-  CloseSession(req: TCloseSessionReq, callback?: (error: void, response: TCloseSessionResp)=>void): void;
+    OpenSession(req: TOpenSessionReq, callback?: (error: void, response: TOpenSessionResp)=>void): void;
 
-  GetInfo(req: TGetInfoReq, callback?: (error: void, response: TGetInfoResp)=>void): void;
+    CloseSession(req: TCloseSessionReq): Promise<TCloseSessionResp>;
 
-  ExecuteStatement(req: TExecuteStatementReq, callback?: (error: void, response: TExecuteStatementResp)=>void): void;
+    CloseSession(req: TCloseSessionReq, callback?: (error: void, response: TCloseSessionResp)=>void): void;
 
-  GetTypeInfo(req: TGetTypeInfoReq, callback?: (error: void, response: TGetTypeInfoResp)=>void): void;
+    GetInfo(req: TGetInfoReq): Promise<TGetInfoResp>;
 
-  GetCatalogs(req: TGetCatalogsReq, callback?: (error: void, response: TGetCatalogsResp)=>void): void;
+    GetInfo(req: TGetInfoReq, callback?: (error: void, response: TGetInfoResp)=>void): void;
 
-  GetSchemas(req: TGetSchemasReq, callback?: (error: void, response: TGetSchemasResp)=>void): void;
+    ExecuteStatement(req: TExecuteStatementReq): Promise<TExecuteStatementResp>;
 
-  GetTables(req: TGetTablesReq, callback?: (error: void, response: TGetTablesResp)=>void): void;
+    ExecuteStatement(req: TExecuteStatementReq, callback?: (error: void, response: TExecuteStatementResp)=>void): void;
 
-  GetTableTypes(req: TGetTableTypesReq, callback?: (error: void, response: TGetTableTypesResp)=>void): void;
+    GetTypeInfo(req: TGetTypeInfoReq): Promise<TGetTypeInfoResp>;
 
-  GetColumns(req: TGetColumnsReq, callback?: (error: void, response: TGetColumnsResp)=>void): void;
+    GetTypeInfo(req: TGetTypeInfoReq, callback?: (error: void, response: TGetTypeInfoResp)=>void): void;
 
-  GetFunctions(req: TGetFunctionsReq, callback?: (error: void, response: TGetFunctionsResp)=>void): void;
+    GetCatalogs(req: TGetCatalogsReq): Promise<TGetCatalogsResp>;
 
-  GetPrimaryKeys(req: TGetPrimaryKeysReq, callback?: (error: void, response: TGetPrimaryKeysResp)=>void): void;
+    GetCatalogs(req: TGetCatalogsReq, callback?: (error: void, response: TGetCatalogsResp)=>void): void;
 
-  GetCrossReference(req: TGetCrossReferenceReq, callback?: (error: void, response: TGetCrossReferenceResp)=>void): void;
+    GetSchemas(req: TGetSchemasReq): Promise<TGetSchemasResp>;
 
-  GetOperationStatus(req: TGetOperationStatusReq, callback?: (error: void, response: TGetOperationStatusResp)=>void): void;
+    GetSchemas(req: TGetSchemasReq, callback?: (error: void, response: TGetSchemasResp)=>void): void;
 
-  CancelOperation(req: TCancelOperationReq, callback?: (error: void, response: TCancelOperationResp)=>void): void;
+    GetTables(req: TGetTablesReq): Promise<TGetTablesResp>;
 
-  CloseOperation(req: TCloseOperationReq, callback?: (error: void, response: TCloseOperationResp)=>void): void;
+    GetTables(req: TGetTablesReq, callback?: (error: void, response: TGetTablesResp)=>void): void;
 
-  GetResultSetMetadata(req: TGetResultSetMetadataReq, callback?: (error: void, response: TGetResultSetMetadataResp)=>void): void;
+    GetTableTypes(req: TGetTableTypesReq): Promise<TGetTableTypesResp>;
 
-  FetchResults(req: TFetchResultsReq, callback?: (error: void, response: TFetchResultsResp)=>void): void;
+    GetTableTypes(req: TGetTableTypesReq, callback?: (error: void, response: TGetTableTypesResp)=>void): void;
 
-  GetDelegationToken(req: TGetDelegationTokenReq, callback?: (error: void, response: TGetDelegationTokenResp)=>void): void;
+    GetColumns(req: TGetColumnsReq): Promise<TGetColumnsResp>;
 
-  CancelDelegationToken(req: TCancelDelegationTokenReq, callback?: (error: void, response: TCancelDelegationTokenResp)=>void): void;
+    GetColumns(req: TGetColumnsReq, callback?: (error: void, response: TGetColumnsResp)=>void): void;
 
-  RenewDelegationToken(req: TRenewDelegationTokenReq, callback?: (error: void, response: TRenewDelegationTokenResp)=>void): void;
-}
+    GetFunctions(req: TGetFunctionsReq): Promise<TGetFunctionsResp>;
+
+    GetFunctions(req: TGetFunctionsReq, callback?: (error: void, response: TGetFunctionsResp)=>void): void;
+
+    GetPrimaryKeys(req: TGetPrimaryKeysReq): Promise<TGetPrimaryKeysResp>;
+
+    GetPrimaryKeys(req: TGetPrimaryKeysReq, callback?: (error: void, response: TGetPrimaryKeysResp)=>void): void;
+
+    GetCrossReference(req: TGetCrossReferenceReq): Promise<TGetCrossReferenceResp>;
+
+    GetCrossReference(req: TGetCrossReferenceReq, callback?: (error: void, response: TGetCrossReferenceResp)=>void): void;
+
+    GetOperationStatus(req: TGetOperationStatusReq): Promise<TGetOperationStatusResp>;
+
+    GetOperationStatus(req: TGetOperationStatusReq, callback?: (error: void, response: TGetOperationStatusResp)=>void): void;
+
+    CancelOperation(req: TCancelOperationReq): Promise<TCancelOperationResp>;
+
+    CancelOperation(req: TCancelOperationReq, callback?: (error: void, response: TCancelOperationResp)=>void): void;
+
+    CloseOperation(req: TCloseOperationReq): Promise<TCloseOperationResp>;
+
+    CloseOperation(req: TCloseOperationReq, callback?: (error: void, response: TCloseOperationResp)=>void): void;
+
+    GetResultSetMetadata(req: TGetResultSetMetadataReq): Promise<TGetResultSetMetadataResp>;
+
+    GetResultSetMetadata(req: TGetResultSetMetadataReq, callback?: (error: void, response: TGetResultSetMetadataResp)=>void): void;
+
+    FetchResults(req: TFetchResultsReq): Promise<TFetchResultsResp>;
+
+    FetchResults(req: TFetchResultsReq, callback?: (error: void, response: TFetchResultsResp)=>void): void;
+
+    GetDelegationToken(req: TGetDelegationTokenReq): Promise<TGetDelegationTokenResp>;
+
+    GetDelegationToken(req: TGetDelegationTokenReq, callback?: (error: void, response: TGetDelegationTokenResp)=>void): void;
+
+    CancelDelegationToken(req: TCancelDelegationTokenReq): Promise<TCancelDelegationTokenResp>;
+
+    CancelDelegationToken(req: TCancelDelegationTokenReq, callback?: (error: void, response: TCancelDelegationTokenResp)=>void): void;
+
+    RenewDelegationToken(req: TRenewDelegationTokenReq): Promise<TRenewDelegationTokenResp>;
+
+    RenewDelegationToken(req: TRenewDelegationTokenReq, callback?: (error: void, response: TRenewDelegationTokenResp)=>void): void;
+
+    GetQueryId(req: TGetQueryIdReq): Promise<TGetQueryIdResp>;
+
+    GetQueryId(req: TGetQueryIdReq, callback?: (error: void, response: TGetQueryIdResp)=>void): void;
+
+    SetClientInfo(req: TSetClientInfoReq): Promise<TSetClientInfoResp>;
+
+    SetClientInfo(req: TSetClientInfoReq, callback?: (error: void, response: TSetClientInfoResp)=>void): void;
+  }
 
 declare class Processor {
   private _handler: object;
 
   constructor(handler: object);
   process(input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_OpenSession(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_CloseSession(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetInfo(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_ExecuteStatement(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetTypeInfo(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetCatalogs(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetSchemas(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetTables(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetTableTypes(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetColumns(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetFunctions(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetPrimaryKeys(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetCrossReference(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetOperationStatus(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_CancelOperation(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_CloseOperation(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetResultSetMetadata(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_FetchResults(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_GetDelegationToken(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_CancelDelegationToken(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
-  process_RenewDelegationToken(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_OpenSession(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_CloseSession(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetInfo(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_ExecuteStatement(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetTypeInfo(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetCatalogs(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetSchemas(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetTables(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetTableTypes(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetColumns(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetFunctions(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetPrimaryKeys(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetCrossReference(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetOperationStatus(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_CancelOperation(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_CloseOperation(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetResultSetMetadata(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_FetchResults(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetDelegationToken(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_CancelDelegationToken(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_RenewDelegationToken(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_GetQueryId(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
+    process_SetClientInfo(seqid: number, input: thrift.TProtocol, output: thrift.TProtocol): void;
 }
