@@ -77,7 +77,6 @@ export default class FetchResultsHelper {
   async fetch(maxRows: number) {
     const prefetchedResponse = this.prefetchedResults.shift();
     if (prefetchedResponse) {
-      console.log("Direct Results Invoked!");
       return this.processFetchResponse(prefetchedResponse);
     }
     return this.driver
