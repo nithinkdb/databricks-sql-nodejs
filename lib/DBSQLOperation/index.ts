@@ -28,8 +28,8 @@ export default class DBSQLOperation implements IOperation {
   private _completeOperation: CompleteOperationHelper;
 
   constructor(driver: HiveDriver, operationHandle: TOperationHandle, directResults?: TSparkDirectResults) {
-    if(directResults && directResults.resultSet) {
-      console.log("Received Direct Results!");
+    if(directResults && directResults.resultSet && !directResults.resultSet.hasMoreRows) {
+      console.log("Direct results returned!")
     }
     this.driver = driver;
     this.operationHandle = operationHandle;

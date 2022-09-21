@@ -69,8 +69,8 @@ export default class FetchResultsHelper {
 
   private processFetchResponse(response: TFetchResultsResp): TRowSet | undefined {
     this.assertStatus(response.status);
-    this.fetchOrientation = TFetchOrientation.FETCH_NEXT;
     this.hasMoreRows = checkIfOperationHasMoreRows(response);
+    this.fetchOrientation = TFetchOrientation.FETCH_NEXT;
     return response.results;
   }
 
